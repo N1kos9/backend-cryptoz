@@ -2,45 +2,35 @@ const express = require("express");
 const axios = require("axios");
 
 const app = express();
-const port = 3001;
+const PORT = process.env.PORT || 3000;
 
 // CORS middleware
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
+  res.setHeader("Access-Control-Allow-Origin", "*"); // Allow all origins
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
   );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With,content-type"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", true);
   next();
 });
 
-// API route
-app.get("/api/data", async (req, res) => {
+// API endpoint
+app.get("/api/assets", async (req, res) => {
   try {
-    // Make a request to the external API (Coingecko)
-    const response = await axios.get(
-      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=6&page=6&sparkline=false&locale=en",
-      {
-        params: {
-          vs_currency: "usd",
-          order: "market_cap_desc",
-          per_page: 6,
-          page: 1,
-          sparkline: false,
-          locale: "en",
-        },
-      }
-    );
-
-    // Send the API response to the frontend
+    const response = await axios.get("https://api.coincap.io/v2/assets");
     res.json(response.data);
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
+    console.error("Error:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
 // Start the server
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
