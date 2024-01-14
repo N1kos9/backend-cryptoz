@@ -19,7 +19,7 @@ app.get("/api/data", async (req, res) => {
   try {
     // Make a request to the external API (Coingecko)
     const response = await axios.get(
-      "https://api.coingecko.com/api/v3/coins/markets",
+      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=6&page=6&sparkline=false&locale=en",
       {
         params: {
           vs_currency: "usd",
